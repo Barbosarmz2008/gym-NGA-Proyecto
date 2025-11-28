@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GYM NGA - Tu Gimnasio de Élite</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #a8daff 0%, #c9e9ff 100%); min-height: 100vh; color: #1a1a2e; }
+        .header { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 1rem 2rem; box-shadow: 0 4px 30px rgba(138, 43, 226, 0.4); position: sticky; top: 0; z-index: 100; border-bottom: 3px solid #8a2be2; }
+        .logo-container { display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin-bottom: 1rem; }
+        .back-button { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #8a2be2; box-shadow: 0 0 20px rgba(138, 43, 226, 0.6); animation: pulse 2s infinite; cursor: pointer; transition: all 0.3s ease; background: white; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+        .back-button:hover { transform: scale(1.1); box-shadow: 0 0 30px rgba(138, 43, 226, 0.8); }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 0 20px rgba(138, 43, 226, 0.6); } 50% { box-shadow: 0 0 30px rgba(138, 43, 226, 1); } }
+        .header h1 { color: #000000; font-size: 3rem; text-align: center; text-shadow: 2px 2px 4px rgba(138, 43, 226, 0.3); font-weight: 900; letter-spacing: 3px; }
+        .nav { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+        .nav-btn { background: linear-gradient(135deg, #8a2be2 0%, #9370db 100%); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 25px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4); border: 2px solid transparent; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 25px rgba(138, 43, 226, 0.8); border-color: #8a2be2; background: linear-gradient(135deg, #9370db 0%, #8a2be2 100%); }
+        .nav-btn.active { background: linear-gradient(135deg, #6a0dad 0%, #8a2be2 100%); transform: scale(1.05); box-shadow: 0 0 20px rgba(138, 43, 226, 1); }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        section { display: none; animation: fadeIn 0.5s ease; }
+        section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .card { background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%); border-radius: 20px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 10px 40px rgba(0,0,0,0.1), 0 0 20px rgba(138, 43, 226, 0.2); transition: transform 0.3s ease; border: 2px solid rgba(138, 43, 226, 0.3); }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 50px rgba(0,0,0,0.15), 0 0 30px rgba(138, 43, 226, 0.4); }
+        .card h2 { color: #8a2be2; margin-bottom: 1.5rem; font-size: 1.8rem; border-bottom: 3px solid #8a2be2; padding-bottom: 0.5rem; text-shadow: 0 0 10px rgba(138, 43, 226, 0.5); }
+        blockquote { background: linear-gradient(135deg, #f0f4ff 0%, #e3f2fd 100%); border-left: 5px solid #8a2be2; padding: 1rem; margin: 1rem 0; font-style: italic; color: #333; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .calculator { display: grid; gap: 1rem; }
+        .input-group { display: flex; flex-direction: column; }
+        .input-group label { font-weight: 600; margin-bottom: 0.5rem; color: #333; }
+        .input-group input, .input-group select { padding: 0.8rem; border: 2px solid #8a2be2; border-radius: 10px; font-size: 1rem; transition: all 0.3s ease; background: #ffffff; color: #333; }
+        .input-group input:focus, .input-group select:focus { outline: none; border-color: #9370db; box-shadow: 0 0 15px rgba(138, 43, 226, 0.5); background: #f8f8ff; }
+        .btn { background: linear-gradient(135deg, #8a2be2 0%, #9370db 100%); color: white; border: none; padding: 1rem 2rem; border-radius: 10px; cursor: pointer; font-size: 1.1rem; font-weight: 600; margin-top: 1rem; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(138, 43, 226, 0.4); }
+        .btn:hover { transform: scale(1.05); box-shadow: 0 6px 30px rgba(138, 43, 226, 0.8); background: linear-gradient(135deg, #9370db 0%, #8a2be2 100%); }
+        .result { background: linear-gradient(135deg, #8a2be2 0%, #6a0dad 100%); color: white; padding: 1.5rem; border-radius: 15px; margin-top: 1.5rem; display: none; box-shadow: 0 8px 25px rgba(138, 43, 226, 0.6); }
+        .result.show { display: block; animation: slideIn 0.5s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        #statsCanvas { border: 2px solid #8a2be2; border-radius: 10px; max-width: 100%; height: auto; margin: 1rem 0; box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4); background: #ffffff; }
+        .svg-container { text-align: center; margin: 2rem 0; }
+        .carousel { position: relative; width: 100%; max-width: 800px; margin: 2rem auto; overflow: hidden; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 20px rgba(138, 43, 226, 0.3); border: 2px solid rgba(138, 43, 226, 0.4); }
+        .carousel-inner { display: flex; transition: transform 0.5s ease; }
+        .carousel-item { min-width: 100%; background: linear-gradient(135deg, #8a2be2 0%, #6a0dad 100%); color: white; padding: 3rem; text-align: center; }
+        .carousel-controls { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; transform: translateY(-50%); }
+        .carousel-btn { background: rgba(138, 43, 226, 0.8); border: 2px solid #8a2be2; color: white; padding: 1rem; cursor: pointer; font-size: 1.5rem; transition: all 0.3s ease; }
+        .carousel-btn:hover { background: rgba(138, 43, 226, 1); box-shadow: 0 0 15px rgba(138, 43, 226, 1); }
+        .carousel-indicators { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; }
+        .indicator { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; }
+        .indicator.active { background: #8a2be2; }
+        dialog { border: none; border-radius: 20px; padding: 2rem; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 500px; background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%); border: 2px solid #8a2be2; color: #333; }
+        dialog::backdrop { background: rgba(0,0,0,0.9); }
+        dialog h3 { color: #8a2be2; margin-bottom: 1rem; text-shadow: 0 0 10px rgba(138, 43, 226, 0.5); }
+        .table-container { overflow-x: auto; margin: 1.5rem 0; }
+        table { width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid rgba(138, 43, 226, 0.3); color: #333; }
+        th { background: linear-gradient(135deg, #8a2be2 0%, #6a0dad 100%); color: white; font-weight: 600; }
+        dl { background: linear-gradient(135deg, #f0f4ff 0%, #e3f2fd 100%); padding: 1.5rem; border-radius: 10px; margin: 1rem 0; border: 1px solid rgba(138, 43, 226, 0.3); }
+        dt { font-weight: bold; color: #9370db; margin-top: 1rem; }
+        dt:first-child { margin-top: 0; }
+        dd { margin-left: 1.5rem; margin-top: 0.5rem; color: #555; }
+        .map-container { position: relative; width: 100%; padding-bottom: 56.25%; margin: 1.5rem 0; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4); border: 2px solid rgba(138, 43, 226, 0.3); }
+        .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        .routine-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+        .routine-card { background: linear-gradient(135deg, #d946ef 0%, #c026d3 100%); color: white; padding: 1.5rem; border-radius: 15px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(217, 70, 239, 0.4); border: 2px solid transparent; }
+        .routine-card:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(217, 70, 239, 0.6); border-color: #d946ef; }
+        .routine-card.male { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4); }
+        .routine-card.male:hover { box-shadow: 0 10px 30px rgba(6, 182, 212, 0.6); border-color: #06b6d4; }
+        .routine-card h3 { margin-bottom: 1rem; font-size: 1.3rem; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .routine-detail { display: none; background: linear-gradient(135deg, #f0f4ff 0%, #e3f2fd 100%); padding: 1rem; border-radius: 10px; margin-top: 1rem; color: #333; border: 1px solid rgba(138, 43, 226, 0.3); }
+        .routine-detail.show { display: block; }
+        .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .price-card { background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%); border-radius: 20px; padding: 2rem; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 3px solid rgba(138, 43, 226, 0.3); }
+        .price-card:hover { transform: translateY(-10px); border-color: #8a2be2; box-shadow: 0 15px 50px rgba(0,0,0,0.15), 0 0 20px rgba(138, 43, 226, 0.6); }
+        .price-card.featured { background: linear-gradient(135deg, #8a2be2 0%, #6a0dad 100%); color: white; transform: scale(1.05); border-color: #9370db; }
+        .price-card h3 { font-size: 1.5rem; margin-bottom: 1rem; color: #9370db; }
+        .price-card.featured h3 { color: white; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .price { font-size: 2.5rem; font-weight: bold; margin: 1rem 0; color: #8a2be2; text-shadow: 0 0 15px rgba(138, 43, 226, 0.5); }
+        .price-card.featured .price { color: white; }
+        .price-list { text-align: left; margin: 1.5rem 0; color: #555; }
+        .price-list li { padding: 0.5rem 0; border-bottom: 1px solid rgba(138, 43, 226, 0.2); }
+        .price-card.featured .price-list { color: rgba(255,255,255,0.9); }
+        .price-card.featured .price-list li { border-bottom-color: rgba(255,255,255,0.2); }
+        .discount-toggle { display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 2rem 0; background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%); padding: 1.5rem; border-radius: 15px; border: 2px solid rgba(138, 43, 226, 0.3); }
+        .toggle-switch { position: relative; width: 60px; height: 30px; background: #e0e0e0; border-radius: 15px; cursor: pointer; transition: background 0.3s ease; border: 2px solid #8a2be2; }
+        .toggle-switch.active { background: #8a2be2; box-shadow: 0 0 15px rgba(138, 43, 226, 0.8); }
+        .toggle-slider { position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; background: white; border-radius: 50%; transition: transform 0.3s ease; }
+        .toggle-switch.active .toggle-slider { transform: translateX(30px); }
+        .landing-page { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #a8daff 0%, #b8e2ff 50%, #c9e9ff 100%); display: none; align-items: center; justify-content: center; z-index: 9999; overflow-y: auto; overflow-x: hidden; transition: opacity 0.8s ease, visibility 0.8s ease; }
+        .landing-page.active-landing { display: flex; }
+        .landing-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent 0%, rgba(138, 43, 226, 0.05) 50%, rgba(168, 218, 255, 0.3) 100%); animation: pulseOverlay 3s infinite; }
+        @keyframes pulseOverlay { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.8; } }
+        .landing-content { position: relative; z-index: 2; text-align: center; max-width: 900px; padding: 2rem; animation: fadeInUp 1s ease; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        .landing-logo { width: 300px; height: auto; margin-bottom: 2rem; filter: drop-shadow(0 0 30px rgba(138, 43, 226, 0.8)); animation: floatLogo 3s ease-in-out infinite; }
+        @keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        .landing-title { font-size: 4rem; font-weight: 900; color: #000000; text-shadow: 2px 2px 4px rgba(138, 43, 226, 0.3); margin-bottom: 1rem; letter-spacing: 5px; animation: glowText 2s ease-in-out infinite; }
+        @keyframes glowText { 0%, 100% { text-shadow: 2px 2px 4px rgba(138, 43, 226, 0.3); } 50% { text-shadow: 2px 2px 8px rgba(138, 43, 226, 0.5); } }
+        .landing-subtitle { font-size: 1.8rem; color: #333; margin-bottom: 3rem; font-weight: 600; text-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .landing-info { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin: 3rem 0; padding: 2rem; background: rgba(255, 255, 255, 0.9); border-radius: 20px; border: 2px solid rgba(138, 43, 226, 0.3); backdrop-filter: blur(10px); }
+        .info-item { display: flex; align-items: center; gap: 1rem; text-align: left; }
+        .info-icon { font-size: 2.5rem; filter: drop-shadow(0 0 10px rgba(138, 43, 226, 0.6)); }
+        .info-item strong { color: #9370db; font-size: 1.2rem; display: block; margin-bottom: 0.5rem; }
+        .info-item p { color: #555; font-size: 0.9rem; line-height: 1.4; }
+        .landing-btn { background: linear-gradient(135deg, #8a2be2 0%, #6a0dad 100%); color: white; border: 3px solid #9370db; padding: 1.5rem 4rem; border-radius: 50px; font-size: 1.5rem; font-weight: 900; cursor: pointer; margin: 2rem 0; transition: all 0.3s ease; box-shadow: 0 0 30px rgba(138, 43, 226, 0.6), 0 10px 40px rgba(0,0,0,0.5); letter-spacing: 2px; animation: pulseBtn 2s infinite; }
+        @keyframes pulseBtn { 0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(138, 43, 226, 0.6); } 50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(138, 43, 226, 1); } }
+        .landing-btn:hover { transform: scale(1.1); box-shadow: 0 0 60px rgba(138, 43, 226, 1), 0 15px 50px rgba(0,0,0,0.7); background: linear-gradient(135deg, #9370db 0%, #8a2be2 100%); }
+        .social-media { display: flex; justify-content: center; gap: 2rem; margin: 2rem 0; }
+        .social-icon { color: #e0e0e0; text-decoration: none; font-size: 1.2rem; padding: 1rem 2rem; background: rgba(138, 43, 226, 0.2); border: 2px solid rgba(138, 43, 226, 0.4); border-radius: 15px; transition: all 0.3s ease; }
+        .social-icon:hover { background: rgba(138, 43, 226, 0.5); border-color: #8a2be2; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(138, 43, 226, 0.5); }
+        .motivational-text { margin-top: 3rem; padding-top: 2rem; border-top: 2px solid rgba(138, 43, 226, 0.3); }
+        .motivational-text p { color: #9370db; font-size: 1.3rem; font-style: italic; margin: 0.5rem 0; text-shadow: 0 0 10px rgba(138, 43, 226, 0.5); }
+        
+        /* Media Queries para Responsive Design */
+        @media (max-width: 1024px) {
+            .header h1 { font-size: 2.5rem; }
+            .landing-title { font-size: 3rem; }
+            .price-grid, .routine-grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+        }
+        
+        @media (max-width: 768px) {
+            .landing-logo { width: 200px; }
+            .landing-title { font-size: 2.5rem; }
+            .landing-subtitle { font-size: 1.2rem; }
+            .landing-info { grid-template-columns: 1fr; gap: 1rem; }
+            .landing-btn { padding: 1rem 2rem; font-size: 1.2rem; }
+            .social-media { flex-direction: column; gap: 1rem; }
+            .header h1 { font-size: 2rem; }
+            .back-button { width: 60px; height: 60px; font-size: 2rem; }
+            .nav { gap: 0.5rem; }
+            .nav-btn { padding: 0.6rem 1rem; font-size: 0.9rem; }
+            .card { padding: 1.5rem; }
+            .price-grid, .routine-grid { grid-template-columns: 1fr; }
+        }
+        
+        @media (max-width: 480px) {
+            .landing-title { font-size: 2rem; }
+            .landing-subtitle { font-size: 1rem; }
+            .landing-btn { padding: 0.8rem 1.5rem; font-size: 1rem; }
+            .header h1 { font-size: 1.5rem; }
+            .back-button { width: 50px; height: 50px; font-size: 1.5rem; }
+            .nav-btn { padding: 0.5rem 0.8rem; font-size: 0.8rem; }
+            .card { padding: 1rem; }
+            .btn { font-size: 1rem; padding: 0.8rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Portada de inicio -->
+    <div id="landing-page" class="landing-page active-landing">
+        <div class="landing-overlay"></div>
+        <div class="landing-content">
+            <img src="https://lh3.googleusercontent.com/gg-dl/ABS2GSkCrwSNbttDEOT2oJ_e922vHaJH_WDLptitTBPJ5TzW5Ptw7W6HLbm2kyx1hdZJp9jd7VNvBCWt0cqLU7nOBOyxcS7gvpXHYvWxdMWcRaKXqLVujOj95pCQyMiZTCN6YeNC7RHKipChtkUTQm8pRkJKkL85ArsMEQWlDsULHPnYQ2q7zQ=s1024-rj" alt="GYM NGA" class="landing-logo">
+            <h1 class="landing-title">TRANSFORMA TU CUERPO</h1>
+            <p class="landing-subtitle">💪 El Único Límite es Tu Mente 💪</p>
+            <div class="landing-info">
+                <div class="info-item">
+                    <span class="info-icon">🕐</span>
+                    <div>
+                        <strong>Horario</strong>
+                        <p>Lun-Vie: 6AM-11PM<br>Sáb-Dom: 8AM-8PM</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">📍</span>
+                    <div>
+                        <strong>Ubicación</strong>
+                        <p>León, Guanajuato<br>Lat. de Blvd. Jose María Morelos 322, Portales de la Arboleda, 37100 León de los Aldama, Gto.</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">📞</span>
+                    <div>
+                        <strong>Contacto</strong>
+                        <p>(477)5691380<br>barbosaramirezja@ag.cbtis225.edu.mx</p>
+                    </div>
+                </div>
+            </div>
+            <button class="landing-btn" id="enterGym">ENTRAR AL GYM</button>
+            <div class="motivational-text">
+                <p>"No Pain, No Gain"</p>
+                <p>🔥 Únete a la Familia GYM NGA 🔥</p>
+            </div>
+        </div>
+    </div>
+
+    <header class="header" style="display: none;">
+        <div class="logo-container">
+            <div class="back-button" id="backToLanding" title="Volver al inicio">⬅️</div>
+            <h1>🏋 GYM NGA 🏋</h1>
+        </div>
+        <nav class="nav">
+            <button class="nav-btn active" data-section="nutricional">🥗 Salud Nutricional</button>
+            <button class="nav-btn" data-section="entrenamiento">🏋 Entrenamiento</button>
+            <button class="nav-btn" data-section="precios">💰 Precios</button>
+            <button class="nav-btn" data-section="ubicacion">📍 Ubicación</button>
+        </nav>
+    </header>
+
+    <!-- Contenedor principal con todas las secciones -->
+    <main class="container" style="display: none;">
+        <!-- Sección: Calculadora Nutricional -->
+        <section id="nutricional" class="active">
+            <article class="card">
+                <h2>Calculadora Nutricional</h2>
+                <blockquote><strong>"La nutrición es la base del rendimiento físico"</strong></blockquote>
+                <p style="margin-bottom: 1.5rem; color: #666;">Calcula tu <em>índice de masa corporal (IMC)</em> y recibe <strong>recomendaciones personalizadas</strong>.</p>
+                <div class="calculator">
+                    <div class="input-group">
+                        <label for="edad">Edad (18-40 años)</label>
+                        <input type="number" id="edad" min="18" max="40" placeholder="Ingresa tu edad">
+                    </div>
+                    <div class="input-group">
+                        <label for="sexo">Sexo</label>
+                        <select id="sexo">
+                            <option value="">Selecciona...</option>
+                            <optgroup label="Opciones">
+                                <option value="hombre">Hombre</option>
+                                <option value="mujer">Mujer</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="peso">Peso (kg)</label>
+                        <input type="number" id="peso" placeholder="Peso en kilogramos" min="1" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label for="altura">Altura (cm)</label>
+                        <input type="number" id="altura" placeholder="Altura en centímetros" min="1" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label for="actividad">Nivel de Actividad</label>
+                        <select id="actividad">
+                            <option value="">Selecciona...</option>
+                            <optgroup label="Nivel">
+                                <option value="sedentario">Sedentario</option>
+                                <option value="ligero">Ligero</option>
+                                <option value="moderado">Moderado</option>
+                                <option value="activo">Activo</option>
+                                <option value="extremo">Extremo</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <button class="btn" id="btnCalcular">Calcular</button>
+                </div>
+                <div id="resultado-imc" class="result"></div>
+                <canvas id="statsCanvas" width="600" height="300"></canvas>
+                <div class="svg-container">
+                    <svg width="200" height="200">
+                        <defs>
+                            <filter id="shadow-filter">
+                                <feDropShadow dx="4" dy="4" stdDeviation="3" flood-color="#764ba2"/>
+                            </filter>
+                        </defs>
+                        <circle cx="100" cy="100" r="80" fill="#667eea" style="filter: url(#shadow-filter);"/>
+                        <text x="100" y="110" text-anchor="middle" fill="white" font-size="24" font-weight="bold">IMC</text>
+                    </svg>
+                </div>
+                <dl>
+                    <dt>IMC</dt><dd>Índice de masa corporal</dd>
+                    <dt>TMB</dt><dd>Tasa metabólica basal</dd>
+                </dl>
+            </article>
+        </section>
+
+        <!-- Sección: Rutinas de Entrenamiento -->
+        <section id="entrenamiento">
+            <article class="card">
+                <h2>Rutinas de Entrenamiento</h2>
+                <blockquote><em>"No pain, no gain"</em></blockquote>
+                <div class="carousel">
+                    <div class="carousel-inner" id="carouselInner">
+                        <div class="carousel-item"><h3>⭐ Testimonio 1</h3><p><em>"Bajé 15kg en 3 meses"</em></p></div>
+                        <div class="carousel-item"><h3>⭐ Testimonio 2</h3><p><em>"Gané músculo increíble"</em></p></div>
+                        <div class="carousel-item"><h3>⭐ Testimonio 3</h3><p><em>"Mejor gym de León"</em></p></div>
+                    </div>
+                    <div class="carousel-controls">
+                        <button class="carousel-btn" id="prevBtn">❮</button>
+                        <button class="carousel-btn" id="nextBtn">❯</button>
+                    </div>
+                    <div class="carousel-indicators">
+                        <span class="indicator active"></span>
+                        <span class="indicator"></span>
+                        <span class="indicator"></span>
+                    </div>
+                </div>
+                <h3 style="color: #06b6d4; margin-top: 2rem;">👨 Rutinas para Hombres</h3>
+                <div style="text-align: center; margin: 2rem 0; padding: 1.5rem; background: linear-gradient(135deg, #f0f4ff 0%, #e3f2fd 100%); border-radius: 15px; border: 2px solid rgba(138, 43, 226, 0.3);">
+                    <h3 style="color: #8a2be2; margin-bottom: 1rem;">📅 Calendario de Entrenamiento</h3>
+                    <p style="color: #555; margin-bottom: 1rem;">Planifica tu semana de ejercicios</p>
+                    <div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; margin-bottom: 1rem;">
+                            <div style="font-weight: bold; color: #8a2be2; padding: 0.5rem; text-align: center;">Lun</div>
+                            <div style="font-weight: bold; color: #8a2be2; padding: 0.5rem; text-align: center;">Mar</div>
+                            <div style="font-weight: bold; color: #8a2be2; padding: 0.5rem; text-align: center;">Mié</div>
+                            <div style="font-weight: bold; color: #8a2be2; padding: 0.5rem; text-align: center;">Jue</div>
+                            <div style="font-weight: bold; color: #8a2be2; padding: 0.5rem; text-align: center;">Vie</div>
+                            <div style="font-weight: bold; color: #8a2be2; padding: 0.5rem; text-align: center;">Sáb</div>
+                            <div style="font-weight: bold; color: #8a2be2; padding: 0.5rem; text-align: center;">Dom</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem;">
+                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem 0.5rem; border-radius: 8px; text-align: center; cursor: pointer; font-size: 0.85rem;">💪 Pecho<br>Tríceps</div>
+                            <div style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; padding: 1rem 0.5rem; border-radius: 8px; text-align: center; cursor: pointer; font-size: 0.85rem;">🦾 Espalda<br>Bíceps</div>
+                            <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 1rem 0.5rem; border-radius: 8px; text-align: center; cursor: pointer; font-size: 0.85rem;">🦵 Pierna<br>Completa</div>
+                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem 0.5rem; border-radius: 8px; text-align: center; cursor: pointer; font-size: 0.85rem;">🔥 Hombros<br>Abdomen</div>
+                            <div style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; padding: 1rem 0.5rem; border-radius: 8px; text-align: center; cursor: pointer; font-size: 0.85rem;">💪 Pecho<br>Bíceps</div>
+                            <div style="background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%); color: white; padding: 1rem 0.5rem; border-radius: 8px; text-align: center; cursor: pointer; font-size: 0.85rem;">🏃 Cardio<br>HIIT</div>
+                            <div style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: white; padding: 1rem 0.5rem; border-radius: 8px; text-align: center; cursor: pointer; font-size: 0.85rem;">😴 Descanso</div>
+                        </div>
+                        <div style="margin-top: 1.5rem; padding: 1rem; background: #f0f4ff; border-radius: 8px; text-align: left;">
+                            <p style="color: #8a2be2; font-weight: bold; margin-bottom: 0.5rem;">📋 Plan Semanal Recomendado:</p>
+                            <ul style="color: #555; font-size: 0.9rem; line-height: 1.8;">
+                                <li>Lunes: Pecho y Tríceps</li>
+                                <li>Martes: Espalda y Bíceps</li>
+                                <li>Miércoles: Pierna Completa</li>
+                                <li>Jueves: Hombros y Abdomen</li>
+                                <li>Viernes: Pecho y Bíceps</li>
+                                <li>Sábado: Cardio/HIIT</li>
+                                <li>Domingo: Descanso Activo</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin: 2rem 0; padding: 1.5rem; background: linear-gradient(135deg, #f0f4ff 0%, #e3f2fd 100%); border-radius: 15px; border: 2px solid rgba(138, 43, 226, 0.3);">
+                    <h3 style="color: #8a2be2; margin-bottom: 1rem;">🎵 Música Motivacional</h3>
+                    <p style="color: #555; margin-bottom: 1rem;">Entrena con la mejor música</p>
+                    <embed src="c:\Users\aaron\Downloads\Lady Gaga - Bad Romance (Official Music Video).mp3">
+                </div>
+
+                <div class="routine-grid">
+                    <div class="routine-card male" data-routine="pecho-h">
+                        <h3>💪 Pecho</h3>
+                        <p><strong>Pecho fuerte y definido</strong></p>
+                        <div id="pecho-h" class="routine-detail">
+                            <strong>Ejercicios:</strong>
+                            <ul>
+                                <li>Press de banca plano con barra: 4 series x 8-10 reps</li>
+                                <li>Press inclinado con mancuernas: 4 series x 10-12 reps</li>
+                                <li>Press declinado con barra: 3 series x 10-12 reps</li>
+                                <li>Aperturas con mancuernas (plano): 3 series x 12-15 reps</li>
+                                <li>Aperturas inclinadas con mancuernas: 3 series x 12-15 reps</li>
+                                <li>Fondos en paralelas: 3 series x 10-15 reps</li>
+                                <li>Cruce de poleas (cable crossover): 3 series x 12-15 reps</li>
+                                <li>Pullover con mancuerna: 3 series x 12 reps</li>
+                                <li>Press con mancuernas plano: 4 series x 10-12 reps</li>
+                                <li>Flexiones con lastre: 3 series x 12-15 reps</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="routine-card male" data-routine="hombro-h">
+                        <h3>🔥 Hombros</h3>
+                        <p><strong>Hombros anchos y redondos</strong></p>
+                        <div id="hombro-h" class="routine-detail">
+                            <strong>Ejercicios:</strong>
+                            <ul>
+                                <li>Press militar con barra: 4 series x 8-10 reps</li>
+                                <li>Press con mancuernas sentado: 4 series x 10-12 reps</li>
+                                <li>Press Arnold: 3 series x 10-12 reps</li>
+                                <li>Elevaciones laterales con mancuernas: 4 series x 12-15 reps</li>
+                                <li>Elevaciones frontales con barra: 3 series x 12 reps</li>
+                                <li>Elevaciones frontales alternas con mancuernas: 3 series x 12 reps c/u</li>
+                                <li>Pájaros (deltoides posterior): 4 series x 12-15 reps</li>
+                                <li>Face pulls en polea: 3 series x 15 reps</li>
+                                <li>Remo al mentón con barra: 3 series x 12 reps</li>
+                                <li>Elevaciones laterales en polea: 3 series x 15 reps</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="routine-card male" data-routine="tricep-h">
+                        <h3>💥 Tríceps</h3>
+                        <p><strong>Brazos grandes y potentes</strong></p>
+                        <div id="tricep-h" class="routine-detail">
+                            <strong>Ejercicios:</strong>
+                            <ul>
+                                <li>Press francés con barra Z: 4 series x 10-12 reps</li>
+                                <li>Press cerrado en banco plano: 4 series x 8-10 reps</li>
+                                <li>Fondos para tríceps en paralelas: 4 series x 10-15 reps</li>
+                                <li>Extensiones de tríceps en polea (cuerda): 3 series x 12-15 reps</li>
+                                <li>Extensiones con barra en polea: 3 series x 12-15 reps</li>
+                                <li>Patada de tríceps con mancuerna: 3 series x 12 reps c/u</li>
+                                <li>Press francés con mancuernas: 3 series x 10-12 reps</li>
+                                <li>Extensiones sobre la cabeza con mancuerna: 3 series x 12 reps</li>
+                                <li>Fondos en banco: 3 series x 15 reps</li>
+                                <li>Extensiones con cuerda sobre la cabeza: 3 series x 12-15 reps</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="routine-card male" data-routine="bicep-h">
+                        <h3>💪 Bíceps</h3>
+                        <p><strong>Brazos voluminosos</strong></p>
+                        <div id="bicep-h" class="routine-detail">
+                            <strong>Ejercicios:</strong>
+                            <ul>
+                                <li>Curl de bíceps con barra Z: 4 series x 10-12 reps</li>
+                                <li>Curl con barra recta: 4 series x 8-10 reps</li>
+                                <li>Curl alterno con mancuernas: 4 series x 10-12 reps c/u</li>
+                                <li>Curl martillo: 4 series x 12 reps</li>
+                                <li>Curl concentrado: 3 series x 12 reps c/u</li>
+                                <li>Curl en banco Scott con barra Z: 3 series x 10-12 reps</li>
+                                <li>Curl en banco Scott con mancuernas: 3 series x 12 reps</li>
+                                <li>Curl en polea baja con barra: 3 series x 12-15 reps</li>
+                                <li>Curl araña (spider curl): 3 series x 12 reps</li>
+                                <li>Curl 21s: 3 series (7+7+7 reps)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="routine-card male" data-routine="antebrazo-h">
+                        <h3>🔨 Antebrazos</h3>
+                        <p><strong>Agarre fuerte y definido</strong></p>
+                        <div id="antebrazo-h" class="routine-detail">
+                            <strong>Ejercicios:</strong>
+                            <ul>
+                                <li>Curl de muñeca con barra (palmas arriba): 4 series x 15-20 reps</li>
+                                <li>Curl de muñeca inverso (palmas abajo): 4 series x 15-20 reps</li>
+                                <li>Curl martillo con agarre grueso: 3 series x 12 reps</li>
+                                <li>Paseo del granjero: 3 series x 40 metros</li>
+                                <li>Colgarse de la barra: 3 series x máximo tiempo</li>
+                                <li>Rotación de muñeca con barra: 3 series x 15 reps</li>
+                                <li>Curl Zottman: 3 series x 12 reps</li>
+                                <li>Flexión de muñeca con mancuerna: 3 series x 15 reps c/u</li>
+                                <li>Extensión de dedos con banda elástica: 3 series x 20 reps</li>
+                                <li>Agarre con pinza de mano: 3 series x 15 reps c/u</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="routine-card male" data-routine="espalda-h">
+                        <h3>🦾 Espalda</h3>
+                        <p><strong>Espalda ancha y poderosa</strong></p>
+                        <div id="espalda-h" class="routine-detail">
+                            <strong>Ejercicios:</strong>
+                            <ul>
+                                <li>Dominadas con agarre prono: 4 series x 8-10 reps</li>
+                                <li>Dominadas con agarre supino: 4 series x 8-10 reps</li>
+                                <li>Peso muerto convencional: 4 series x 6-8 reps</li>
+                                <li>Peso muerto rumano: 4 series x 10 reps</li>
+                                <li>Remo con barra agarre pronado: 4 series x 8-10 reps</li>
+                                <li>Remo con mancuerna a una mano: 4 series x 10-12 reps c/u</li>
+                                <li>Remo en polea baja: 4 series x 10-12 reps</li>
+                                <li>Jalones al pecho con agarre abierto: 3 series x 12 reps</li>
+                                <li>Jalones con agarre cerrado: 3 series x 12 reps</li>
+                                <li>Pullover en polea alta: 3 series x 12-15 reps</li>
+                                <li>Remo en T: 3 series x 10-12 reps</li>
+                                <li>Encogimientos con barra (trapecio): 4 series x 12-15 reps</li>
+                                <li>Encogimientos con mancuernas: 4 series x 12-15 reps</li>
+                                <li>Face pulls: 3 series x 15 reps</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="routine-card male" data-routine="pierna-h">
+                        <h3>🦵 Pierna Completa</h3>
+                        <p><strong>Piernas masivas y fuertes</strong></p>
+                        <div id="pierna-h" class="routine-detail">
+                            <strong>Cuádriceps:</strong>
+                            <ul>
+                                <li>Sentadilla con barra atrás: 5 series x 8-10 reps</li>
+                                <li>Sentadilla frontal: 4 series x 10-12 reps</li>
+                                <li>Prensa de piernas: 4 series x 12-15 reps</li>
+                                <li>Extensiones de cuádriceps: 4 series x 12-15 reps</li>
+                                <li>Sentadilla búlgara: 3 series x 12 reps c/u</li>
+                                <li>Zancadas con barra: 3 series x 12 reps c/u</li>
+                                <li>Zancadas caminando: 3 series x 20 pasos</li>
+                                <li>Hack squat: 4 series x 10-12 reps</li>
+                            </ul>
+                            <strong>Femoral:</strong>
+                            <ul>
+                                <li>Peso muerto rumano: 4 series x 10-12 reps</li>
+                                <li>Curl de pierna acostado: 4 series x 12-15 reps</li>
+                                <li>Curl de pierna sentado: 3 series x 12-15 reps</li>
+                                <li>Curl nórdico: 3 series x 8-10 reps</li>
+                                <li>Buenos días con barra: 3 series x 12 reps</li>
+                                <li>Peso muerto pierna rígida: 4 series x 10 reps</li>
+                            </ul>
+                            <strong>Glúteos:</strong>
+                            <ul>
+                                <li>Hip thrust con barra: 4 series x 12-15 reps</li>
+                                <li>Patada de glúteo en polea: 3 series x 15 reps c/u</li>
+                                <li>Puente de glúteos: 3 series x 15 reps</li>
+                                <li>Peso muerto sumo: 4 series x 10 reps</li>
+                            </ul>
+                            <strong>Gemelos:</strong>
+                            <ul>
+                                <li>Elevación de gemelos de pie: 4 series x 15-20 reps</li>
+                                <li>Elevación de gemelos sentado: 4 series x 15-20 reps</li>
+                                <li>Elevación de gemelos en prensa: 3 series x 20 reps</li>
+                                <li>Gemelos en escalón a una pierna: 3 series x 15 reps c/u</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="color: #d946ef; margin-top: 2rem;">👩 Rutinas para Mujeres</h3>
+                <div class="routine-grid">
+                    <div class="routine-card" data-routine="gluteo-m">
+                        <h3>🍑 Glúteos</h3>
+                        <p><strong>Glúteos firmes y levantados</strong></p>
+                        <div id="gluteo-m" class="routine-detail">
+                            <strong>Ejercicios:</strong>
+                            <ul>
+                                <li>Hip thrust con barra: 4 series x 12-15 reps</li>
+                                <li>Hip thrust a una pierna: 3 series x 12 reps c/u</li>
+                                <li>Sentadilla sumo con mancuerna: 4 series x 15 reps</li>
+                                <li>Sentadilla búlgara: 4 series x 12 reps c/u</li>
+                                <li>Patada de glúteo en polea: 3 series x 15 reps c/u</li>
+                                <li>Patada de burro (donkey kicks): 3 series x 20 reps c/u</li>
+                                <li>Abducción de cadera en máquina: 4 series x 15-20 reps</li>
+                                <li>Abducción de cadera acostada lateral: 3 series x 20 reps c/u</li>
+                                <li>Puente de glúteos con banda: 4 series x 15 reps</li>
+                                <li>Clamshells con banda: 3 series x 20 reps c/u</li>
+                                <li>Zancadas inversas: 3 series x 12 reps c/u</li>
+                                <li>Step ups con mancuernas: 3 series x 15 reps c/u</li>
+                                <li>Peso muerto rumano: 4 series x 12 reps</li>
+                                <li>Fire hydrants: 3 series x 20 reps c/u</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="routine-card" data-routine="pierna-m">
+                        <h3>🦵 Piernas</h3>
+                        <p><strong>Piernas tonificadas y fuertes</strong></p>
+                        <div id="pierna-m" class="routine-detail">
+                            <strong>Cuádriceps y General:</strong>
+                            <ul>
+                                <li>Sentadilla con peso corporal: 4 series x 20 reps</li>
+                                <li>Sentadilla goblet con kettlebell: 4 series x 15 reps</li>
+                                <li>Zancadas alternas con mancuernas: 4 series x 12 reps c/u</li>
+                                <li>Zancadas laterales: 3 series x 12 reps c/u</li>
+                                <li>Extensiones de cuádriceps: 3 series x 15 reps</li>
+                                <li>Prensa de piernas: 4 series x 15-20 reps</li>
+                                <li>Sentadilla sissy: 3 series x 12 reps</li>
+                            </ul>
+                            <strong>Femoral:</strong>
+                            <ul>
+                                <li>Curl de piernas acostado: 4 series x 15 reps</li>
+                                <li>Curl de piernas sentado: 3 series x 15 reps</li>
+                                <li>Peso muerto con mancuernas: 4 series x 12 reps</li>
+                                <li>Buenos días con barra ligera: 3 series x 15 reps</li>
+                            </ul>
+                            <strong>Gemelos:</strong>
+                            <ul>
+                                <li>Elevaciones de gemelos de pie: 4 series x 20 reps</li>
+                                <li>Elevaciones de gemelos sentado: 4 series x 20 reps</li>
+                                <li>Saltos de gemelo: 3 series x 15 reps</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="routine-card" data-routine="abdomen-m">
+                        <h3>💎 Abdomen y Core</h3>
+                        <p><strong>Core fuerte y definido</strong></p>
+                        <div id="abdomen-m" class="routine-detail">
+                            <strong>Ejercicios:</strong>
+                            <ul>
+                                <li>Plancha frontal: 4 series x 45-60 segundos</li>
+                                <li>Plancha lateral: 3 series x 30-45 seg c/u</li>
+                                <li>Plancha con elevación de pierna: 3 series x 20 reps</li>
+                                <li>Mountain climbers: 3 series x 30 reps</li>
+                                <li>Crunch abdominal: 4 series x 20 reps</li>
+                                <li>Crunch invertido: 3 series x 15 reps</li>
+                                <li>Elevación de piernas colgado: 3 series x 12-15 reps</li>
+                                <li>Elevación de piernas acostado: 4 series x 15 reps</li>
+                                <li>Bicicleta abdominal: 4 series x 20 reps c/u</li>
+                                <li>Russian twists: 3 series x 30 reps</li>
+                                <li>Toe touches: 3 series x 20 reps</li>
+                                <li>V-ups: 3 series x 12 reps</li>
+                                <li>Dead bug: 3 series x 20 reps</li>
+                                <li>Bird dog: 3 series x 15 reps c/u</li>
+                                <li>Pallof press: 3 series x 12 reps c/u</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="routine-card" data-routine="brazos-m">
+                        <h3>💪 Brazos y Hombros</h3>
+                        <p><strong>Brazos tonificados y hombros definidos</strong></p>
+                        <div id="brazos-m" class="routine-detail">
+                            <strong>Hombros:</strong>
+                            <ul>
+                                <li>Press de hombros con mancuernas: 4 series x 12 reps</li>
+                                <li>Elevaciones laterales: 4 series x 15 reps</li>
+                                <li>Elevaciones frontales: 3 series x 12 reps</li>
+                                <li>Pájaros con mancuernas: 3 series x 15 reps</li>
+                                <li>Press Arnold ligero: 3 series x 12 reps</li>
+                                <li>Círculos con mancuernas: 3 series x 15 reps</li>
+                            </ul>
+                            <strong>Bíceps:</strong>
+                            <ul>
+                                <li>Curl de bíceps con mancuernas: 3 series x 12-15 reps</li>
+                                <li>Curl martillo: 3 series x 12 reps</li>
+                                <li>Curl concentrado: 3 series x 12 reps c/u</li>
+                                <li>Curl en polea: 3 series x 15 reps</li>
+                            </ul>
+                            <strong>Tríceps:</strong>
+                            <ul>
+                                <li>Extensión de tríceps sobre cabeza: 3 series x 12-15 reps</li>
+                                <li>Patada de tríceps: 3 series x 12 reps c/u</li>
+                                <li>Fondos en banco: 3 series x 12-15 reps</li>
+                                <li>Extensiones en polea: 3 series x 15 reps</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="routine-card" data-routine="espalda-m">
+                        <h3>🏋 Espalda</h3>
+                        <p><strong>Espalda fuerte y postura correcta</strong></p>
+                        <div id="espalda-m" class="routine-detail">
+                            <strong>Ejercicios:</strong>
+                            <ul>
+                                <li>Remo con mancuerna a una mano: 4 series x 12 reps c/u</li>
+                                <li>Remo en polea baja: 4 series x 12-15 reps</li>
+                                <li>Jalones al pecho: 4 series x 12 reps</li>
+                                <li>Jalones con agarre cerrado: 3 series x 12 reps</li>
+                                <li>Pullover con mancuerna: 3 series x 12 reps</li>
+                                <li>Peso muerto rumano ligero: 3 series x 15 reps</li>
+                                <li>Hiperextensiones: 3 series x 15 reps</li>
+                                <li>Remo con banda elástica: 3 series x 20 reps</li>
+                                <li>Face pulls: 3 series x 15 reps</li>
+                                <li>Superman (en el suelo): 3 series x 15 reps</li>
+                                <li>Pájaros invertidos: 3 series x 15 reps</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="routine-card" data-routine="pecho-m">
+                        <h3>🌸 Pecho</h3>
+                        <p><strong>Pecho firme y tonificado</strong></p>
+                        <div id="pecho-m" class="routine-detail">
+                            <strong>Ejercicios:</strong>
+                            <ul>
+                                <li>Press con mancuernas en banco plano: 3 series x 12 reps</li>
+                                <li>Press inclinado con mancuernas: 3 series x 12 reps</li>
+                                <li>Flexiones de pecho: 3 series x 12-15 reps</li>
+                                <li>Flexiones con rodillas apoyadas: 3 series x 15 reps</li>
+                                <li>Aperturas con mancuernas: 3 series x 12 reps</li>
+                                <li>Aperturas inclinadas: 3 series x 12 reps</li>
+                                <li>Cruce de poleas: 3 series x 15 reps</li>
+                                <li>Press en máquina: 3 series x 12 reps</li>
+                                <li>Pullover con mancuerna: 3 series x 12 reps</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn" id="btnDialog">Ver entrenador</button>
+            </article>
+        </section>
+
+        <!-- Sección: Planes y Precios -->
+        <section id="precios">
+            <article class="card">
+                <h2>Planes y Precios</h2>
+                <blockquote><strong>"Invertir en salud es la mejor inversión"</strong></blockquote>
+                <div class="discount-toggle">
+                    <span style="font-weight: 600;">👤 Regular</span>
+                    <div class="toggle-switch" id="studentToggle"><div class="toggle-slider"></div></div>
+                    <span style="font-weight: 600;">🎓 Estudiante (-15%)</span>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Día</th><th>Horario</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>Lunes-Viernes</strong></td><td>6AM-11PM</td></tr>
+                            <tr><td><strong>Sábado-Domingo</strong></td><td>8AM-8PM</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="price-grid">
+                    <div class="price-card">
+                        <h3>📝 Inscripción</h3>
+                        <div class="price">$<span class="price-value" data-price="200">200</span></div>
+                        <p>Pago único al registrarte</p>
+                    </div>
+                    <div class="price-card">
+                        <h3>📅 Mensualidad</h3>
+                        <div class="price">$<span class="price-value" data-price="600">600</span></div>
+                        <p>Acceso completo al gimnasio</p>
+                        <ul class="price-list">
+                            <li>✓ Uso de todas las máquinas</li>
+                            <li>✓ Área de pesas libres</li>
+                            <li>✓ Zona de cardio</li>
+                            <li>✓ Vestidores y regaderas</li>
+                        </ul>
+                    </div>
+                    <div class="price-card">
+                        <h3>🏃 Visita Individual</h3>
+                        <div class="price">$<span class="price-value" data-price="50">50</span></div>
+                        <p>Entrada por día</p>
+                        <ul class="price-list">
+                            <li>✓ Acceso de un día</li>
+                            <li>✓ Uso de instalaciones</li>
+                            <li>✓ Sin compromiso</li>
+                        </ul>
+                    </div>
+                    <div class="price-card">
+                        <h3>🥗 Plan Nutricional</h3>
+                        <div class="price">$<span class="price-value" data-price="350">350</span></div>
+                        <p>Dieta personalizada mensual</p>
+                        <ul class="price-list">
+                            <li>✓ Evaluación nutricional</li>
+                            <li>✓ Plan de alimentación</li>
+                            <li>✓ Seguimiento semanal</li>
+                            <li>✓ Recetas personalizadas</li>
+                        </ul>
+                    </div>
+                    <div class="price-card">
+                        <h3>💪 Plan de Entrenamiento</h3>
+                        <div class="price">$<span class="price-value" data-price="450">450</span></div>
+                        <p>Rutinas personalizadas</p>
+                        <ul class="price-list">
+                            <li>✓ Evaluación física inicial</li>
+                            <li>✓ Rutina personalizada</li>
+                            <li>✓ Seguimiento mensual</li>
+                            <li>✓ Ajustes de rutina</li>
+                        </ul>
+                    </div>
+                    <div class="price-card featured">
+                        <h3>⭐ Paquete Premium</h3>
+                        <div class="price">$<span class="price-value" data-price="2200">2200</span></div>
+                        <p style="margin-bottom: 1rem; font-size: 0.9rem;">¡El paquete más completo!</p>
+                        <ul class="price-list">
+                            <li>✓ Muñequeras premium</li>
+                            <li>✓ Rodilleras profesionales</li>
+                            <li>✓ Cinturón de levantamiento</li>
+                            <li>✓ Straps para jalones</li>
+                            <li>✓ Toalla deportiva FitZone</li>
+                            <li>✓ Botella shaker personalizada</li>
+                            <li>✓ Plan de entrenamiento completo</li>
+                            <li>✓ Plan nutricional personalizado</li>
+                            <li>✓ Mensualidad del gimnasio incluida</li>
+                            <li>✓ Acceso a clases grupales</li>
+                            <li>✓ Evaluación física mensual</li>
+                            <li>✓ 2 sesiones de entrenamiento personal</li>
+                        </ul>
+                    </div>
+                    <div class="price-card featured">
+                        <h3>🎯 Paquete Completo</h3>
+                        <div class="price">$<span class="price-value" data-price="1400">1400</span></div>
+                        <p style="margin-bottom: 1rem; font-size: 0.9rem;">Todo lo que necesitas para empezar</p>
+                        <ul class="price-list">
+                            <li>✓ Plan de entrenamiento personalizado</li>
+                            <li>✓ Plan nutricional completo</li>
+                            <li>✓ Mensualidad del gimnasio</li>
+                            <li>✓ Evaluación física inicial</li>
+                            <li>✓ Seguimiento semanal</li>
+                            <li>✓ Ajustes de rutina mensuales</li>
+                            <li>✓ Acceso a clases grupales</li>
+                            <li>✓ Asesoría nutricional permanente</li>
+                        </ul>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <!-- Sección: Ubicación y Contacto -->
+        <section id="ubicacion">
+            <article class="card">
+                <h2>📍 Ubicación</h2>
+                <blockquote><em>"Visítanos y conoce nuestras instalaciones"</em></blockquote>
+                <p style="color: #333; margin-bottom: 1rem;"><strong>🏋️ OMNIA FITNESS CENTER</strong></p>
+                <p style="color: #555; margin-bottom: 1rem;">Lat. de Blvd. Jose María Morelos 322, Portales de la Arboleda, 37100 León de los Aldama, Gto.</p>
+                <p style="color: #555; margin-bottom: 1rem;">Instrucciones:</p>
+                <p style="color: #555; margin-bottom: 1rem;">Copia la ubicacion de arriba y despues dale clic en donde dice ampliar mapa y pega esa direccion y va a aparecer el gym. </p>
+                <div class="map-container">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3721.8527!2d-101.68254!3d21.13048!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x842bbea5c0a1d3b1%3A0x4d5e8f9c3a2b1c0d!2sOMNIA%20FITNESS%20CENTER!5e0!3m2!1ses!2smx!4v1234567890" loading="lazy" allowfullscreen style="border:0;"></iframe>
+                </div>
+                <div style="text-align: center; margin: 2rem 0;">
+                    <h3 style="color: #8a2be2; margin-bottom: 1rem;">🎥 Recorrido Virtual</h3>
+                    <iframe
+                        width="100%"
+                        height="400"
+                        src="https://www.youtube.com/embed/xojQ_Yb0ri4"
+                        title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen
+                        style="max-width: 800px; border-radius: 15px; border: 2px solid rgba(138, 43, 226, 0.3);">
+                    </iframe>
+                </div>
+                <dl>
+                    <dt>📞 Teléfono</dt>
+                    <dd>(477) 5691380</dd>
+                    <dt>✉️ Email</dt>
+                    <dd>barbosaramirezja@ag.cbtis225.edu.mx</dd>
+                    <dt>📍 Dirección</dt>
+                    <dd>Blvd. Jose Maria Morelos 322<br>Portales de la Arboleda<br>37100 León de los Aldama, Guanajuato</dd>
+                </dl>
+            </article>
+        </section>
+    </main>
+
+    <dialog id="trainerDialog">
+        <h3>👨‍🏫 Entrenador</h3>
+        <p><strong>Camacho Fitness</strong></p>
+        <p><em>"Tu mejor versión está a un paso"</em></p>
+        <button class="btn" id="btnCerrar">Cerrar</button>
+    </dialog>
+
+    <script>
+        // Variables globales
+        let isStudent = false;
+        let currentSlide = 0;
+
+        // Navegación principal
+        document.getElementById('enterGym').addEventListener('click', function() {
+            document.getElementById('landing-page').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('landing-page').style.display = 'none';
+                document.querySelector('.header').style.display = 'block';
+                document.querySelector('.container').style.display = 'block';
+            }, 800);
+        });
+
+        // Botón para volver a la pantalla principal
+        document.getElementById('backToLanding').addEventListener('click', function() {
+            document.querySelector('.header').style.display = 'none';
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('landing-page').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('landing-page').style.opacity = '1';
+            }, 10);
+        });
+
+        // Navegación entre secciones
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const sectionId = this.getAttribute('data-section');
+                document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById(sectionId).classList.add('active');
+                this.classList.add('active');
+            });
+        });
+
+        // Calculadora IMC
+        document.getElementById('btnCalcular').addEventListener('click', function() {
+            const edad = parseInt(document.getElementById('edad').value);
+            const sexo = document.getElementById('sexo').value;
+            const peso = parseFloat(document.getElementById('peso').value);
+            const altura = parseFloat(document.getElementById('altura').value);
+            const actividad = document.getElementById('actividad').value;
+
+            if (isNaN(edad) || isNaN(peso) || isNaN(altura) || !sexo || !actividad) {
+                alert('Por favor, ingresa valores válidos en todos los campos.');
+                return;
+            }
+            if (edad < 18 || edad > 40) {
+                alert('La edad debe estar entre 18 y 40 años.');
+                return;
+            }
+            if (peso <= 0) {
+                alert('❌ El peso debe ser un número positivo mayor a 0.');
+                return;
+            }
+            if (altura <= 0) {
+                alert('❌ La altura debe ser un número positivo mayor a 0.');
+                return;
+            }
+            if (peso > 500) {
+                alert('⚠️ El peso ingresado parece incorrecto. Por favor verifica.');
+                return;
+            }
+            if (altura > 300) {
+                alert('⚠️ La altura ingresada parece incorrecta. Por favor verifica (debe estar en centímetros).');
+                return;
+            }
+            const alturaM = altura / 100;
+            const imc = peso / (alturaM * alturaM);
+            let cat = '', rec = '';
+            if (imc < 18.5) { 
+                cat = 'Bajo peso'; 
+                rec = 'Te recomendamos aumentar masa muscular con una dieta hipercalórica y entrenamiento de fuerza.'; 
+            } else if (imc < 25) { 
+                cat = 'Normal'; 
+                rec = '¡Mantén tu peso con una dieta balanceada y ejercicio regular!'; 
+            } else if (imc < 30) { 
+                cat = 'Sobrepeso'; 
+                rec = 'Combina cardio y entrenamiento de fuerza para mejorar tu composición corporal.'; 
+            } else { 
+                cat = 'Obesidad'; 
+                rec = 'Consulta a un nutricionista para un plan personalizado y evita riesgos de salud.'; 
+            }
+
+            const fact = {sedentario: 1.2, ligero: 1.375, moderado: 1.55, activo: 1.725, extremo: 1.9};
+            let tmb = sexo === 'hombre' ? 10 * peso + 6.25 * altura - 5 * edad + 5 : 10 * peso + 6.25 * altura - 5 * edad - 161;
+            const cal = Math.round(tmb * fact[actividad]);
+
+            document.getElementById('resultado-imc').innerHTML = `
+                <h3>📊 Resultados</h3>
+                <p><strong>IMC:</strong> ${imc.toFixed(1)} (${cat})</p>
+                <p><strong>Calorías diarias:</strong> ${cal} kcal</p>
+                <p><strong>Recomendación:</strong> ${rec}</p>
+            `;
+            document.getElementById('resultado-imc').classList.add('show');
+
+            const canvas = document.getElementById('statsCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 600, 300);
+
+            ctx.fillStyle = '#8a2be2';
+            ctx.font = 'bold 20px Arial';
+            ctx.fillText('📊 Tus Estadísticas Nutricionales', 120, 30);
+
+            const imcHeight = Math.min(imc * 7, 240);
+            ctx.fillStyle = '#667eea';
+            ctx.fillRect(70, 250, 80, -imcHeight);
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText('IMC', 85, 270);
+            ctx.fillText(imc.toFixed(1), 85, 285);
+
+            ctx.strokeStyle = '#555';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 3]);
+
+            ctx.beginPath();
+            ctx.moveTo(60, 250 - 18.5 * 7);
+            ctx.lineTo(180, 250 - 18.5 * 7);
+            ctx.stroke();
+            ctx.fillStyle = '#999';
+            ctx.font = '10px Arial';
+            ctx.fillText('18.5', 185, 250 - 18.5 * 7 + 4);
+
+            ctx.strokeStyle = '#4caf50';
+            ctx.beginPath();
+            ctx.moveTo(60, 250 - 25 * 7);
+            ctx.lineTo(180, 250 - 25 * 7);
+            ctx.stroke();
+            ctx.fillStyle = '#4caf50';
+            ctx.fillText('25', 185, 250 - 25 * 7 + 4);
+
+            ctx.strokeStyle = '#ff9800';
+            ctx.beginPath();
+            ctx.moveTo(60, 250 - 30 * 7);
+            ctx.lineTo(180, 250 - 30 * 7);
+            ctx.stroke();
+            ctx.fillStyle = '#ff9800';
+            ctx.fillText('30', 185, 250 - 30 * 7 + 4);
+
+            ctx.setLineDash([]);
+
+            const tmbDisplay = Math.min(tmb / 10, 240);
+            ctx.fillStyle = '#764ba2';
+            ctx.fillRect(220, 250, 80, -tmbDisplay);
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText('TMB', 235, 270);
+            ctx.fillText(Math.round(tmb), 215, 285);
+
+            const calDisplay = Math.min(cal / 10, 240);
+            ctx.fillStyle = '#f093fb';
+            ctx.fillRect(370, 250, 80, -calDisplay);
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText('Calorías', 360, 270);
+            ctx.fillText(cal, 370, 285);
+
+            ctx.fillStyle = '#555';
+            ctx.font = '11px Arial';
+            ctx.fillText('(Necesarias por día)', 350, 295);
+
+            ctx.strokeStyle = '#8a2be2';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(50, 252);
+            ctx.lineTo(470, 252);
+            ctx.stroke();
+        });
+
+        // Rutinas desplegables
+        document.querySelectorAll('.routine-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const routineId = this.getAttribute('data-routine');
+                const detail = document.getElementById(routineId);
+                const isVisible = detail.classList.contains('show');
+                document.querySelectorAll('.routine-detail').forEach(d => d.classList.remove('show'));
+                if (!isVisible) detail.classList.add('show');
+            });
+        });
+
+        // Descuento estudiante
+        document.getElementById('studentToggle').addEventListener('click', function() {
+            isStudent = !isStudent;
+            this.classList.toggle('active');
+            document.querySelectorAll('.price-value').forEach(el => {
+                const orig = parseFloat(el.getAttribute('data-price'));
+                el.textContent = isStudent ? Math.round(orig * 0.85) : orig;
+            });
+        });
+
+        // Carousel
+        function updateIndicators() {
+            document.querySelectorAll('.indicator').forEach((ind, i) => {
+                ind.classList.toggle('active', i === currentSlide);
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { 
+            moveCarousel(-1); 
+            updateIndicators(); 
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => { 
+            moveCarousel(1); 
+            updateIndicators(); 
+        });
+
+        function moveCarousel(dir) {
+            const items = document.querySelectorAll('.carousel-item');
+            currentSlide += dir;
+            if (currentSlide < 0) currentSlide = items.length - 1;
+            if (currentSlide >= items.length) currentSlide = 0;
+            document.getElementById('carouselInner').style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+
+        setInterval(() => { 
+            moveCarousel(1); 
+            updateIndicators(); 
+        }, 5000);
+
+        // Dialog
+        document.getElementById('btnDialog').addEventListener('click', () => {
+            document.getElementById('trainerDialog').showModal();
+        });
+
+        document.getElementById('btnCerrar').addEventListener('click', () => {
+            document.getElementById('trainerDialog').close();
+        });
+    </script>
+</body>
+</html>
